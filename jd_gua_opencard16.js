@@ -1,5 +1,5 @@
 /*
-七夕告白季-开卡 [gua_opencard6.js]
+大牌集合 宠粉狂欢 [gua_opencard16.js]
 ————————————————
 跑此脚本需要添加依赖文件[sign_graphics_validate.js]
 
@@ -10,26 +10,22 @@
 没有邀请助力
 没有邀请助力
 
-一个号最长可能要跑5分钟
-
-开5组卡(9+9+9+9+7) 共43个卡 每个卡10京豆 (如果在别的地方开过卡 则在这不能开卡 故没有京豆
-2个日常任务 有浏览、关注、加购 (每次1京豆 关注和加购可以多次
-(默认不加购 如需加购请设置环境变量[guaopencard_addSku6]为"true"
-做完浏览、关注、加购 可以领取50京豆
+开14卡 每个卡10京豆 (如果在别的地方开过卡 则在这不能开卡 故没有京豆
+1个日常任务 有关注、加购 (每次1京豆 关注和加购可以多次
+(默认不加购 如需加购请设置环境变量[guaopencard_addSku16]为"true"
 
 默认脚本不执行
 如需执行脚本请设置环境变量
-guaopencard6="true"
-
+guaopencard16="true"
 ————————————————
 因需要加载依赖文件
 所有不支持手机软件(Quantumultx、Loon、Surge、小火箭等
 ————————————————
-入口：[七夕告白季-开卡 (https://3.cn/-1ie6CsW)]
+入口：[ 大牌集合 宠粉狂欢 (https://3.cn/1iKiQP-f)]
 
-30 0,8 * 8 * https://raw.githubusercontent.com/smiek2221/scripts/master/gua_opencard6.js, tag=七夕告白季-开卡, enabled=true
+30 10,19 * 8 * https://raw.githubusercontent.com/smiek2221/scripts/master/gua_opencard16.js, tag=大牌集合 宠粉狂欢, enabled=true
 */
-const $ = new Env('七夕告白季-开卡');
+const $ = new Env('大牌集合 宠粉狂欢');
 const Faker=require('./sign_graphics_validate.js') 
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 
@@ -45,8 +41,11 @@ if ($.isNode()) {
 } else {
   cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
 }
-let guaopencard_addSku = false
-const JD_API_HOST = `https://api.m.jd.com/client.action`;
+let guaopencard_addSku = "false"
+guaopencard_addSku = $.isNode() ? (process.env.guaopencard_addSku16 ? process.env.guaopencard_addSku16 : `${guaopencard_addSku}`) : ($.getdata('guaopencard_addSku16') ? $.getdata('guaopencard_addSku16') : `${guaopencard_addSku}`);
+let guaopencard = "false"
+guaopencard = $.isNode() ? (process.env.guaopencard16 ? process.env.guaopencard16 : `${guaopencard}`) : ($.getdata('guaopencard16') ? $.getdata('guaopencard16') : `${guaopencard}`);
+
 message = ""
 !(async () => {
   if (!cookiesArr[0]) {
@@ -55,27 +54,24 @@ message = ""
     });
     return;
   }
-  if ($.isNode()) {
-    if (!process.env.guaopencard6 || process.env.guaopencard6 == "false") {
-      console.log('如需执行脚本请设置环境变量[guaopencard6]为"true"')
-      return
-    }
-  }
-  guaopencard_addSku = process.env.guaopencard_addSku6
-  if (!process.env.guaopencard_addSku6 || process.env.guaopencard_addSku6 == "false") {
-    console.log('如需加购请设置环境变量[guaopencard_addSku6]为"true"')
-  }
-  console.log(`入口:\nhttps://3.cn/-1ie6CsW`)
+  console.log(`入口:\nhttps://3.cn/1iKiQP-f`)
   for (let i = 0; i < cookiesArr.length; i++) {
     cookie = cookiesArr[i];
     if (cookie) {
       $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
       $.index = i + 1;
-      $.isLogin = true;
+      $.bean = 0
       await getUA()
       $.nickName = '';
       console.log(`\n\n******开始【京东账号${$.index}】${$.nickName || $.UserName}*********\n`);
       await run();
+      if($.bean > 0) message += `【京东账号${$.index}】获得${$.bean}京豆\n`
+    }
+  }
+  if(message){
+    $.msg($.name, ``, `${message}`);
+    if ($.isNode()){
+      await notify.sendNotify(`${$.name}`, `${message}`);
     }
   }
 })()
@@ -88,20 +84,12 @@ async function run() {
     await getHtml();
     await $.wait(parseInt(Math.random() * 1000 + 2000, 10))
     if(!$.fp || !$.eid){
+      message += `【京东账号${$.index}】获取活动信息失败！\n`
       $.log("获取活动信息失败！")
       return
     }
     let config = [
-      // {configCode:'601189050083447fbb6c6f33831863ae',configName:'七夕美妆联合开卡第二组'},
-      // {configCode:'efe66286334f4b47a95a2c756ff637af',configName:'七夕联合开卡第五组'},
-
-      {configCode:'d9de88cd314b4455859027978a7abb68',configName:'七夕联合开卡第一组'},
-      {configCode:'ec46a109054a463395c5666694908d5a',configName:'七夕联合开卡第2组 新'},
-      {configCode:'c8240993509a49da9b53645084a69e12',configName:'七夕任务组件1-2组'},
-      {configCode:'9af170296a9f4bce8268eb5c813bb359',configName:'七夕联合开卡第三组'},
-      {configCode:'4f6dac3a61084e23bf9bcad9360987d8',configName:'七夕联合开卡第4组'},
-      {configCode:'af1ac7eba89c4b089c1d6976988e1013',configName:'七夕联合开卡第5组 新'},
-      {configCode:'abe6bafe2f6b4efca6ba5b429daf5f26',configName:'七夕任务组件3-5组'}
+      {configCode:'46ca9658706e4d43937ec0a185bb4057',configName:'个护联合开卡活动'},
     ]
     for(let i in config){
       $.hotFlag = false
@@ -111,83 +99,75 @@ async function run() {
       $.taskInfo = ''
       let q = 5
       for(m=1;q--;m++){
-        if($.task == '') await getActivity(item.configCode,item.configName,0)
+        if($.task == '') await getActivity(item.configCode,item.configName,3)
         if($.task || $.hotFlag) break
       }
-      if($.hotFlag) continue;
-      if($.task.showOrder){
-        console.log(`\n[${item.configName}] ${$.task.showOrder == 2 && '日常任务' || $.task.showOrder == 1 && '开卡' || '未知活动类型'} ${($.taskInfo.rewardStatus == 2) && '全部完成' || ''}`)
-        if($.taskInfo.rewardStatus == 2) continue;
-        $.taskList = $.task.memberList || $.task.taskList || []
-        $.oneTask = ''
-        for (let i = 0; i < $.taskList.length; i++) {
-          $.oneTask = $.taskList[i];
-          if($.task.showOrder == 1){
-            console.log(`${$.oneTask.cardName} ${0 == $.oneTask.result ? "开卡得" + $.oneTask.rewardQuantity + "京豆" : 1 == $.oneTask.result ? "领取" + $.oneTask.rewardQuantity + "京豆" : 3 == $.oneTask.result ? "其他渠道入会" : "已入会"}`)
-            if($.oneTask.result == 0) await statistic(`{"activityType":"module_task","groupType":7,"configCode":"${item.configCode}","itemId":${$.oneTask.cardId}}`)
-            if($.oneTask.result == 0) await join($.oneTask.venderId)
-            await $.wait(parseInt(Math.random() * 1000 + 500, 10))
-            if($.oneTask.result == 1 || $.oneTask.result == 0) await getReward(`{"configCode":"${item.configCode}","groupType":7,"itemId":${$.oneTask.cardId},"eid":"${$.eid}","fp":"${$.fp}"}`)
-          }else if($.task.showOrder == 2){
-            $.cacheNum = 0
-            $.doTask = false
-            let name = `${1 == $.oneTask.groupType ? "关注并浏览店铺" : 2 == $.oneTask.groupType ? "加购并浏览商品" : 3 == $.oneTask.groupType ? "关注并浏览频道" : 6 == $.oneTask.groupType ? "浏览会场" : "未知"}`
-            let msg = `(${$.oneTask.finishCount}/${$.oneTask.taskCount})`
-            let status = `${$.oneTask.finishCount >= $.oneTask.taskCount && '已完成' || "去" + (1 == $.oneTask.groupType ? "关注" : 2 == $.oneTask.groupType ? "加购" : 3 == $.oneTask.groupType ? "关注" : 6 == $.oneTask.groupType ? "浏览" : "做任务")}`
-            console.log(`${name}${msg} ${status}`)
-            if(guaopencard_addSku+"" != "true" && 2 == $.oneTask.groupType) console.log('如需加购请设置环境变量[guaopencard_addSku6]为"true"\n');
-            if(guaopencard_addSku+"" != "true" && 2 == $.oneTask.groupType) continue;
-            if($.oneTask.finishCount < $.oneTask.taskCount){
-              await doTask(`{"configCode":"${item.configCode}","groupType":${$.oneTask.groupType},"itemId":"${$.oneTask.item.itemId}","eid":"${$.eid}","fp":"${$.fp}"}`)
-              let c = $.oneTask.taskCount - $.oneTask.finishCount - 1
-              for(n=2;c--;n++){
-                console.log(`第${n}次`)
-                await getActivity(item.configCode,item.configName,$.oneTask.groupType)
-                $.oneTasks = ''
-                let q = 3
-                for(m=1;q--;m++){
-                  if($.oneTasks == '') await getActivity(item.configCode,item.configName,$.oneTask.groupType)
-                  if($.oneTasks) break
-                }
-                if($.oneTasks){
-                  c = $.oneTasks.taskCount - $.oneTasks.finishCount
-                  if($.oneTasks.item.itemId == $.oneTask.item.itemId){
-                    n--;
-                    console.log(`数据缓存中`)
-                    $.cacheNum++;
-                    if($.cacheNum > 5) console.log('请重新执行脚本，数据缓存问题');
-                    if($.cacheNum > 5) break;
-                    await getUA()
-                    await $.wait(parseInt(Math.random() * 1000 + 3000, 10))
-                    await getHtml();
-                  }else{
-                    $.cacheNum = 0
-                  }
-                  if($.oneTasks.item.itemId != $.oneTask.item.itemId && $.oneTasks.finishCount < $.oneTasks.taskCount) await doTask(`{"configCode":"${item.configCode}","groupType":${$.oneTasks.groupType},"itemId":"${$.oneTasks.item.itemId}","eid":"${$.eid}","fp":"${$.fp}"}`)
-                }else{
-                  n--;
-                }
-              }
-            }
-          }else{
-            console.log('未知活动类型')
-          }
+      if($.task.memberTask && $.task.memberTask.memberList){
+        let msg = ''
+        if(guaopencard+"" != "true"){
+          msg = '如需开卡请设置环境变量[guaopencard16]为"true"'
         }
-        if($.task.showOrder == 2){
-          if($.doTask){
-            $.taskInfo = ''
-            let q = 5
-            for(m=1;q--;m++){
-              if($.taskInfo == '') await getActivity(item.configCode,item.configName,-1)
-              if($.taskInfo) break
-            }
-          }
-          if($.taskInfo.rewardStatus == 1) await getReward(`{"configCode":"${item.configCode}","groupType":5,"itemId":1,"eid":"${$.eid}","fp":"${$.fp}"}`,1)
+        console.log(`\n[${$.task.moduleBaseInfo.configName}] ${$.task.memberTask.showOrder == 2 && '日常任务' || $.task.memberTask.showOrder == 1 && '开卡任务' || '未知任务'} ${($.task.moduleBaseInfo.rewardStatus == 2) && '全部完成' || ''}${msg}`)
+        $.oneTask = ''
+        for (let o in $.task.memberTask.memberList) {
+          if(guaopencard !== "true") break
+          $.oneTask = $.task.memberTask.memberList[o];
+          console.log(`[${$.oneTask.cardName}] ${0 == $.oneTask.result ? "开卡得" + $.oneTask.rewardQuantity + "京豆" : 1 == $.oneTask.result ? "领取" + $.oneTask.rewardQuantity + "京豆" : 3 == $.oneTask.result ? "其他渠道入会" : "已入会"}`)
+          if($.oneTask.result == 0) await statistic(`{"activityType":"module_task","groupType":7,"configCode":"${item.configCode}","itemId":${$.oneTask.cardId}}`)
+          if($.oneTask.result == 0) await join($.oneTask.venderId)
+          await $.wait(parseInt(Math.random() * 1000 + 500, 10))
+          if($.oneTask.result == 1 || $.oneTask.result == 0) await getReward(`{"configCode":"${item.configCode}","groupType":7,"itemId":${$.oneTask.cardId},"eid":"${$.eid}","fp":"${$.fp}"}`)
         }
       }
-      await $.wait(parseInt(Math.random() * 1000 + 1000, 10))
+      if($.task.dailyTask && $.task.dailyTask.taskList){
+        for (let t in $.task.dailyTask.taskList) {
+          $.oneTask = $.task.dailyTask.taskList[t];
+          $.cacheNum = 0
+          $.doTask = false
+          $.outActivity = false
+          let name = `${1 == $.oneTask.groupType ? "关注并浏览店铺" : 2 == $.oneTask.groupType ? "加购并浏览商品" : 3 == $.oneTask.groupType ? "关注并浏览频道" : 6 == $.oneTask.groupType ? "浏览会场" : "未知"}`
+          let msg = `(${$.oneTask.finishCount}/${$.oneTask.taskCount})`
+          let status = `${$.oneTask.finishCount >= $.oneTask.taskCount && '已完成' || "去" + (1 == $.oneTask.groupType ? "关注" : 2 == $.oneTask.groupType ? "加购" : 3 == $.oneTask.groupType ? "关注" : 6 == $.oneTask.groupType ? "浏览" : "做任务")}`
+          console.log(`${name}${msg} ${status}`)
+          if(guaopencard_addSku+"" != "true" && 2 == $.oneTask.groupType) console.log('如需加购请设置环境变量[guaopencard_addSku16]为"true"\n');
+          if(guaopencard_addSku+"" != "true" && 2 == $.oneTask.groupType) continue;
+          if($.oneTask.finishCount < $.oneTask.taskCount){
+            await doTask(`{"configCode":"${item.configCode}","groupType":${$.oneTask.groupType},"itemId":"${$.oneTask.item.itemId}","eid":"${$.eid}","fp":"${$.fp}"}`)
+            let c = $.oneTask.taskCount - $.oneTask.finishCount - 1
+            for(n=2;c-- && !$.outActivity;n++){
+              if($.outActivity) break
+              console.log(`第${n}次`)
+              await getActivity(item.configCode,item.configName,$.oneTask.groupType)
+              $.oneTasks = ''
+              let q = 3
+              for(m=1;q--;m++){
+                if($.oneTasks == '') await getActivity(item.configCode,item.configName,$.oneTask.groupType)
+                if($.oneTasks) break
+              }
+              if($.oneTasks){
+                c = $.oneTasks.taskCount - $.oneTasks.finishCount
+                if($.oneTasks.item.itemId == $.oneTask.item.itemId){
+                  n--;
+                  console.log(`数据缓存中`)
+                  $.cacheNum++;
+                  if($.cacheNum > 5) console.log('请重新执行脚本，数据缓存问题');
+                  if($.cacheNum > 5) break;
+                  await getUA()
+                  await $.wait(parseInt(Math.random() * 1000 + 3000, 10))
+                  await getHtml();
+                }else{
+                  $.cacheNum = 0
+                }
+                if($.oneTasks.item.itemId != $.oneTask.item.itemId && $.oneTasks.finishCount < $.oneTasks.taskCount) await doTask(`{"configCode":"${item.configCode}","groupType":${$.oneTasks.groupType},"itemId":"${$.oneTasks.item.itemId}","eid":"${$.eid}","fp":"${$.fp}"}`)
+              }else{
+                n--;
+              }
+              await $.wait(parseInt(Math.random() * 1000 + 1000, 10))
+            }
+          }
+        }
+      }
     }
-    
   } catch (e) {
     console.log(e)
   }
@@ -225,6 +205,8 @@ function getActivity(code,name,flag) {
                     break
                   }
                 }
+              }else if(flag == 3){
+                $.task = res.data
               }else{
                 console.log('活动-未知类型')
               }
@@ -273,8 +255,12 @@ function doTask(body) {
           if(typeof res == 'object'){
             if(res.success == true){
               console.log(`领奖成功:${$.oneTask.rewardQuantity}京豆`)
-            }else{
+              $.bean += $.oneTask.rewardQuantity
+            }else if(res.errorMessage){
+              if(res.errorMessage.indexOf('活动已结束') > -1) $.outActivity = true
               console.log(`${res.errorMessage}`)
+            }else{
+              console.log(data)
             }
           }
           
@@ -311,6 +297,7 @@ function getReward(body, flag = 0) {
           if(typeof res == 'object'){
             if(res.success == true){
               console.log(`领奖成功:${flag == 1 && $.taskInfo.rewardFinish || $.oneTask.rewardQuantity}京豆`)
+              $.bean += $.oneTask.rewardQuantity || 0
             }else{
               console.log(`${res.errorMessage}`)
             }

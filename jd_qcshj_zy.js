@@ -2,30 +2,30 @@
 tgchannel：https://t.me/Ariszy8028
 github：https://github.com/Ariszy/Private-Script
 boxjs：https://raw.githubusercontent.com/Ariszy/Private-Script/master/Ariszy.boxjs.json
+
 [task_local]
-#荣耀焕新季
-0 1 * * * https://raw.githubusercontent.com/Ariszy/Private-Script/master/JD/zy_ryhxj.js, tag= 荣耀焕新季
+#汽车生活节
+20 1 * * * https://raw.githubusercontent.com/Ariszy/Private-Script/master/JD/zy_qcshj.js, tag= 汽车生活节
 ================Loon==============
 [Script]
-cron "50 0,4 * * *" script-path= https://raw.githubusercontent.com/Ariszy/Private-Script/master/JD/zy_ryhxj.js,tag= 荣耀焕新季
+cron "20 1 * * *" script-path= https://raw.githubusercontent.com/Ariszy/Private-Script/master/JD/zy_qcshj.js,tag= 汽车生活节
 ===============Surge=================
-荣耀焕新季 = type=cron,cronexp="0 1 * * *",wake-system=1,timeout=3600,script-path= https://raw.githubusercontent.com/Ariszy/Private-Script/master/JD/zy_ryhxj.js
+汽车生活节 = type=cron,cronexp="20 1 * * *",wake-system=1,timeout=3600,script-path= https://raw.githubusercontent.com/Ariszy/Private-Script/master/JD/zy_qcshj.js
 ============小火箭=========
-荣耀焕新季 = type=cron,script-path= https://raw.githubusercontent.com/Ariszy/Private-Script/master/JD/zy_ryhxj.js, cronexpr="0 1 * * *", timeout=3600, enable=true
+汽车生活节 = type=cron,script-path= https://raw.githubusercontent.com/Ariszy/Private-Script/master/JD/zy_qcshj.js, cronexpr="20 1 * * *", timeout=3600, enable=true
 */
-
-const $ = new Env('荣耀焕新季')
+const $ = new Env('汽车生活节')
 const notify = $.isNode() ?require('./sendNotify') : '';
 cookiesArr = []
 CodeArr = []
 cookie = ''
-var list2tokenArr = [],list4tokenArr = [],list6tokenArr = [],list7tokenArr = [],list8tokenArr = [],list9tokenArr = [],list11tokenArr = [],list12tokenArr = [],listtokenArr = []
+var list2tokenArr = [],list4tokenArr = [],list6tokenArr = [],list5tokenArr = [],list4tokenArr = [],list3tokenArr = [],list1tokenArr = [],list2tokenArr = [],listtokenArr = []
 var taskid,token,helpcode;
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
 let tz = ($.getval('tz') || '1');//0关闭通知，1默认开启
 const invite=1;//新用户自动邀请，0关闭，1默认开启
-const logs =1;//0为关闭日志，1为开启
+const logs =0;//0为关闭日志，1为开启
 var hour=''
 var minute=''
 if ($.isNode()) {
@@ -53,11 +53,6 @@ if ($.isNode()) {
     $.msg($.name, '【提示】请先获取cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
     return;
   }
-  for(let i = 0; i < cookiesArr.length; i++){
-      cookie = cookiesArr[i];
-      await gethelpcode()
-      
-}
   for (let i =0; i < cookiesArr.length; i++) {
       cookie = cookiesArr[i];
       $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
@@ -76,13 +71,24 @@ if ($.isNode()) {
                 continue
             }
       
-      await getlist()
-      await Ariszy()
+       await gethelpcode()
+       await getlist()
+       await Ariszy()
+       await zy()
+      
+   }
+for(let i = 0; i < cookiesArr.length; i++){
+      cookie = cookiesArr[i];
+      $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
+      message = ''
+      $.isLogin = true;
+      $.index = i + 1;
+       console.log(`\n******开始【京东账号${$.index}】${$.nickName || $.UserName}助力模块*********\n`);
+      
       await control()
-      await zy()
-      await userScore()
       await Lottery()
-  }
+      await userScore()
+}
 
 })()
     .catch((e) => $.logErr(e))
@@ -105,7 +111,7 @@ function PostRequest(uri,body) {
 }
 
 async function doTask(){
- const body = `functionId=harmony_collectScore&body=%7B%22appId%22%3A%221E1NYwqc%22%2C%22taskToken%22%3A%22${token}%22%2C%22taskId%22%3A${taskid}%2C%22actionType%22%3A1%7D&client=wh5&clientVersion=1.0.0`
+ const body = `functionId=harmony_collectScore&body=%7B%22appId%22%3A%221E1NYw6w%22%2C%22taskToken%22%3A%22${token}%22%2C%22taskId%22%3A${taskid}%2C%22actionType%22%3A1%7D&client=wh5&clientVersion=1.0.0`
  const MyRequest = PostRequest(``,body)
  return new Promise((resolve) => {
    $.post(MyRequest,async(error, response, data) =>{
@@ -114,7 +120,7 @@ async function doTask(){
         if(logs)$.log(data)
         if(result.code == 0){
            console.log("\n"+result.data.bizMsg+"\n")
-   await $.wait(4000)
+   await $.wait(6000)
         }else{
            $.log(result.data.bizMsg+"\n")
         }
@@ -127,7 +133,7 @@ async function doTask(){
    })
   }
 async function DoTask(){
- const body = `functionId=harmony_collectScore&body=%7B%22appId%22%3A%221E1NYwqc%22%2C%22taskToken%22%3A%22${token}%22%2C%22taskId%22%3A${taskid}%2C%22actionType%22%3A0%7D&client=wh5&clientVersion=1.0.0`
+ const body = `functionId=harmony_collectScore&body=%7B%22appId%22%3A%221E1NYw6w%22%2C%22taskToken%22%3A%22${token}%22%2C%22taskId%22%3A${taskid}%2C%22actionType%22%3A0%7D&client=wh5&clientVersion=1.0.0`
  const MyRequest = PostRequest(``,body)
  return new Promise((resolve) => {
    $.post(MyRequest,async(error, response, data) =>{
@@ -136,7 +142,7 @@ async function DoTask(){
         if(logs)$.log(data)
         if(result.data.bizCode == 0){
            console.log(result.data.bizMsg+"获得"+result.data.result.score+";共有"+result.data.result.userScore+"\n")
-   await $.wait(4000)
+   await $.wait(4000) 
         }else{
            console.log(result.data.bizMsg+"\n")
         }
@@ -149,7 +155,7 @@ async function DoTask(){
    })
   }
 async function Lottery(){
- const body = `functionId=healthyDay_getLotteryResult&body=%7B%22appId%22%3A%221E1NYwqc%22%2C%22taskId%22%3A2%7D&client=wh5&clientVersion=1.0.0`
+ const body = `functionId=healthyDay_getLotteryResult&body=%7B%22appId%22%3A%221E1xRy6c%22%2C%22taskId%22%3A7%7D&client=wh5&clientVersion=1.0.0`
  const MyRequest = PostRequest(``,body)
  return new Promise((resolve) => {
    $.post(MyRequest,async(error, response, data) =>{
@@ -171,14 +177,14 @@ async function Lottery(){
    })
   }
 async function getLottery(){
- const body = `functionId=interact_template_getLotteryResult&body=%7B%22appId%22%3A%221E1NYwqc%22%7D&client=wh5&clientVersion=1.0.0`
+ const body = `functionId=interact_template_getLotteryResult&body=%7B%22appId%22:%221E1xRy6c%22%7D&client=wh5&clientVersion=1.0.0`
  const MyRequest = PostRequest(``,body)
  return new Promise((resolve) => {
    $.post(MyRequest,async(error, response, data) =>{
     try{
         const result = JSON.parse(data)
         if(logs)$.log(data)
-        if(result.data.bizCode == 0){
+        if(result.data.bizCode == 0 && result.data.result.lotteryReturnCode == 0){
            console.log("\n获得"+result.data.result.userAwardsCacheDto.jBeanAwardVo.prizeName+"\n")
    await $.wait(4000)
         }else{
@@ -208,14 +214,14 @@ async function zy(){
    list2tokenArr.splice(0,list2tokenArr.length);
 }
 async function control(){
-     for(let i = 0; i < list6tokenArr.length; i++){
+     for(let i = 0; i < list6tokenArr.distinct().length; i++){
    helpcode = list6tokenArr[i]
    await dosupport()
    await $.wait(4000)
 }
 }
 async function dosupport(){
-   const body = `functionId=harmony_collectScore&body=%7B%22appId%22%3A%221E1NYwqc%22%2C%22taskToken%22%3A%22${helpcode}%22%2C%22taskId%22%3A12%2C%22actionType%22%3A0%7D&client=wh5&clientVersion=1.0.0`
+   const body = `functionId=harmony_collectScore&body=%7B%22appId%22%3A%221E1xRy6c%22%2C%22taskToken%22%3A%22${helpcode}%22%2C%22taskId%22%3A6%2C%22actionType%22%3A0%7D&client=wh5&clientVersion=1.0.0`
  const MyRequest = PostRequest(``,body)
  return new Promise((resolve) => {
    $.post(MyRequest,async(error, response, data) =>{
@@ -237,7 +243,7 @@ async function dosupport(){
    })
   }
 async function getlist(){
- const MyRequest = PostRequest(``,`functionId=healthyDay_getHomeData&body={"appId":"1E1NYwqc","taskToken":"","channelId":1}&client=wh5&clientVersion=1.0.0`)
+ const MyRequest = PostRequest(``,`functionId=healthyDay_getHomeData&body={"appId":"1E1xRy6c","taskToken":"","channelId":1}&client=wh5&clientVersion=1.0.0`)
  return new Promise((resolve) => {
     $.post(MyRequest,async(error, response, data) =>{
     try{
@@ -245,40 +251,44 @@ async function getlist(){
         if(logs)$.log(data)
         if(result.code == 0){
        console.log("查看任务列表\n")
-       let list2 = result.data.result.taskVos.find(item => item.taskId == 2)
-       for(let i = 0; i < list2.productInfoVos.length; i ++){
-       listtokenArr.push(2+list2.productInfoVos[i].taskToken)
-list2tokenArr.push(list2.productInfoVos[i].taskToken)
-       }
-       
-       let list4 = result.data.result.taskVos.find(item => item.taskId == 4)
-       for(let i = 0; i < list4.productInfoVos.length; i ++){
-       listtokenArr.push(4+list4.productInfoVos[i].taskToken)
-list2tokenArr.push(list4.productInfoVos[i].taskToken)
-       }
-       
-       let list6 = result.data.result.taskVos.find(item => item.taskId == 6)
-       for(let i = 0; i < list6.productInfoVos.length; i ++){
-       listtokenArr.push(6+list6.productInfoVos[i].taskToken)
-list2tokenArr.push(list6.productInfoVos[i].taskToken)
-       }
-       
        let list7 = result.data.result.taskVos.find(item => item.taskId == 7)
        for(let i = 0; i < list7.shoppingActivityVos.length; i ++){
        listtokenArr.push(7+list7.shoppingActivityVos[i].taskToken)
 list2tokenArr.push(list7.shoppingActivityVos[i].taskToken)
        }
-    
-       let list8 = result.data.result.taskVos.find(item => item.taskId == 8)
-       listtokenArr.push(8+list8.simpleRecordInfoVo.taskToken)
-list2tokenArr.push(list8.simpleRecordInfoVo.taskToken)
        
-       let list11 = result.data.result.taskVos.find(item => item.taskId == 11)
-       for(let i = 0; i < list11.followShopVo.length; i ++){
-   listtokenArr.push(11+list11.followShopVo[i].taskToken)
-list2tokenArr.push(list11.followShopVo[i].taskToken)
+       let list2 = result.data.result.taskVos.find(item => item.taskId == 2)
+       for(let i = 0; i < list2.shoppingActivityVos.length; i ++){
+       listtokenArr.push(2+list2.shoppingActivityVos[i].taskToken)
+list2tokenArr.push(list2.shoppingActivityVos[i].taskToken)
        }
-      // $.log(JSON.stringify(listtokenArr))
+       
+       let list3 = result.data.result.taskVos.find(item => item.taskId == 3)
+       for(let i = 0; i < list3.shoppingActivityVos.length; i ++){
+       listtokenArr.push(3+list3.shoppingActivityVos[i].taskToken)
+list2tokenArr.push(list3.shoppingActivityVos[i].taskToken)
+       }
+       
+       let list4 = result.data.result.taskVos.find(item => item.taskId == 4)
+       for(let i = 0; i < list4.shoppingActivityVos.length; i ++){
+       listtokenArr.push(4+list4.shoppingActivityVos[i].taskToken)
+list2tokenArr.push(list4.shoppingActivityVos[i].taskToken)
+       }
+    
+       let list5 = result.data.result.taskVos.find(item => item.taskId == 5)
+       for(let i = 0; i < list5.followShopVo.length; i ++){listtokenArr.push(5+list5.followShopVo[i].taskToken)
+list2tokenArr.push(list5.followShopVo[i].taskToken)
+//$.log(list5.followShopVo[i].taskToken)
+       }
+       let list6 = result.data.result.taskVos.find(item => item.taskId == 6)
+       for(let i = 0; i < list6.brandMemberVos.length; i ++){listtokenArr.push(6+list6.brandMemberVos[i].taskToken)
+list2tokenArr.push(list6.brandMemberVos[i].taskToken)
+       }
+       let list9 = result.data.result.taskVos.find(item => item.taskId == 9)
+       for(let i = 0; i < list9.productInfoVos.length; i ++){listtokenArr.push(9+list9.productInfoVos[i].taskToken)
+list2tokenArr.push(list9.productInfoVos[i].taskToken)
+       }
+       //$.log(JSON.stringify(listtokenArr))
       
         }else{
            $.log(result.data.bizMsg+"\n")
@@ -293,7 +303,7 @@ list2tokenArr.push(list11.followShopVo[i].taskToken)
   }
 
 async function gethelpcode(){
- const MyRequest = PostRequest(``,`functionId=healthyDay_getHomeData&body={"appId":"1E1NYwqc","taskToken":"","channelId":1}&client=wh5&clientVersion=1.0.0`)
+ const MyRequest = PostRequest(``,`functionId=healthyDay_getHomeData&body={"appId":"1E1xRy6c","taskToken":"","channelId":1}&client=wh5&clientVersion=1.0.0`)
  return new Promise((resolve) => {
     $.post(MyRequest,async(error, response, data) =>{
     try{
@@ -301,9 +311,12 @@ async function gethelpcode(){
         if(logs)$.log(data)
         if(result.code == 0){
 
-let list12 = result.data.result.taskVos.find(item => item.taskId == 12)
-       list4tokenArr.push(12+list12.assistTaskDetailVo.taskToken)
-list6tokenArr.push(list12.assistTaskDetailVo.taskToken)
+let list8 = result.data.result.taskVos.find(item => item.taskId == 8)
+
+       
+   list4tokenArr.push(8+list8.assistTaskDetailVo.taskToken)
+list6tokenArr.push(list8.assistTaskDetailVo.taskToken)
+        
         }else{
            $.log(result.data.bizMsg+"\n")
         }
@@ -317,7 +330,7 @@ list6tokenArr.push(list12.assistTaskDetailVo.taskToken)
   }
 
 async function userScore(){
- const MyRequest = PostRequest(``,`functionId=healthyDay_getHomeData&body={"appId":"1E1NYwqc","taskToken":"","channelId":1}&client=wh5&clientVersion=1.0.0`)
+ const MyRequest = PostRequest(``,`functionId=healthyDay_getHomeData&body={"appId":"1E1xRy6c","taskToken":"","channelId":1}&client=wh5&clientVersion=1.0.0`)
  return new Promise((resolve) => {
     $.post(MyRequest,async(error, response, data) =>{
     try{
@@ -325,8 +338,8 @@ async function userScore(){
         if(logs)$.log(data)
         if(result.code == 0){
         let userScore = result.data.result.userInfo.userScore
-        $.log("共有荣耀值："+userScore+";开始抽奖"+Math.floor(userScore/500)+"次")
-        for(let i = 0; i < Math.floor(userScore/500); i++){
+        $.log("共有燃力值："+userScore+";开始抽奖"+Math.floor(userScore/200)+"次")
+        for(let i = 0; i < Math.floor(userScore/100); i++){
         await getLottery()
         }
         }else{
